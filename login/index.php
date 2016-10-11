@@ -5,8 +5,10 @@
 	 * Date: 12/10/16
 	 * Time: 1:03 AM
 	 */
-	
+	echo "Started";
+	mysqli_report(MYSQLI_REPORT_ALL);
 	if(!empty($_POST)) {
+		echo "Posted";
 		$servername = "localhost";
 		$username = "webAccess";
 		$pword = "webpassword";
@@ -15,15 +17,42 @@
 		$conn = new mysqli($servername, $username, $pword, $dbName);
 		
 		if($conn->connect_error) {
-			die("Connection failed: " . $conn->connect_error);
+			die("Database Connection failed: " . $conn->connect_error);
 		}
 		
 		$prepStmtLogin = $conn->prepare("SELECT COUNT(*) FROM login WHERE email=? AND password=?");
-		$prepStmtLogin->bind_param("ss", $_POST["email"], hash('sha256', $_POST["password"]));
-		if(!$prepStmtLogin->execute()) {
-			echo "Execute failed: " . $prepStmtLogin->errno . " - " . $prepStmtLogin->error;
+		$email = $_POST["email"];
+		$hashedPassword = hash('sha256', $_POST["password"]);
+		$prepStmtLogin->bind_param("ss", $email, $hashedPassword);
+		echo "Statement Bound";
+		if($loginRow = $prepStmtLogin->execute()) {
+			$prepStmtLogin->store_result();
+			$prepStmtLogin->bind_result($count);
+			if(!$prepStmtLogin->fetch() ||  $count == 0) {
+				echo "<br>Count: ".$count;
+				die("Login failed");
+			}
+			$prepStmtLogin->free_result();
+			$prepStmtLogin->close();
 		}
 		else {
+			die("Execute failed: " . $prepStmtLogin->errno . " - " . $prepStmtLogin->error);
+		}
+		
+		if($count > 0) {
+			echo "Else Started";
+			if(!$prepStmtCookie = $conn->prepare("SELECT id from users where email=?")) {
+				echo "Prep failed: " . $prepStmtCookie->error_list;
+			}
+			if(!$prepStmtCookie->bind_param("s", $email)) {
+				echo "Bind failed: " . $prepStmtCookie->error_list;
+			}
+			if(!$userID = $prepStmtCookie->execute()) {
+				echo "Execute failed: ";
+			}
+			echo "Cookie Set";
+			setcookie("userID", $userID, time() + (86400*30), "/");
+			echo "Before header";
 			header("Location: /users");
 		}
 	}
