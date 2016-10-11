@@ -1,5 +1,10 @@
 <?php
 	
+	// If user attempts to navigate directly here, redirect to login
+	if(!isset($_COOKIE["userID"])) {
+		header("Location: /login");
+	}
+	
 	$servername = "localhost";
 	$username = "webAccess";
 	$pword = "webpassword";
