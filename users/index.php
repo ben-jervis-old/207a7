@@ -1,5 +1,11 @@
 <?php
 	
+	// If user attempts to navigate directly here, redirect to login
+	if(!isset($_COOKIE["userID"])) {
+		header("Location: /login");
+	}
+	
+	// Establish DB connection
 	$servername = "localhost";
 	$username = "webAccess";
 	$pword = "webpassword";
@@ -8,7 +14,7 @@
 	$conn = new mysqli($servername, $username, $pword, $dbName);
 	
 	if($conn->connect_error) {
-		die("Connection failed: " . $conn->connect_error);
+		die("Databse Connection failed: " . $conn->connect_error);
 	}
 ?>
 
