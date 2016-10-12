@@ -39,16 +39,47 @@
 			<h4><?php echo $greetString?></h4>
 			<table class="table">
 				<thead>
-					<td>User ID</td>
-					<td>Name</td>
+					<td>Title</td>
+					<td>Author</td>
+					<td>Call Number</td>
+					<td>Check Out</td>
 					
 				</thead>
-				<tr>
-					<td>First entry</td>
-					<td>Second entry</td>
-				</tr>
+				<?php
+					if(!empty($_GET["subject"])) {
+						
+						if(!$prepStmtSearch = $conn->prepare("SELECT id, title, author, callNum FROM books where topics LIKE ?")) {
+							echo "Prep Statement Failed";
+						}
+						$searchString = "%" . strtolower($_GET["subject"]) . "%";
+						if(!$prepStmtSearch->bind_param("s", $searchString)) {
+							echo "Bind failed";
+						}
+						
+						if($prepStmtSearch->execute() && $prepStmtSearch->store_result() && $prepStmtSearch->num_rows() > 0) {
+							
+							$prepStmtSearch->bind_result($bookID, $title, $author, $callNum);
+							
+							while($prepStmtSearch->fetch()) {
+								echo "<tr>";
+								echo "  <td>$title</td>";
+								echo "  <td>$author</td>";
+								echo "  <td>$callNum</td>";
+								echo "<td><a href='/checkout/?bookID=$bookID'><span class='glyphicon glyphicon-share'></span></a></td>";
+								echo "</tr>";
+							}
+							
+							$prepStmtSearch->free_result();
+							$prepStmtSearch->close();
+						}
+						else {
+							echo "<tr>";
+							echo "<td colspan=\"3\">No results found</td>";
+							echo "</tr>";
+						}
+					}
+				?>
 			</table>
-			<button class="btn btn-lg">Button Test</button>
 		</div>
 	</body>
 </html>
