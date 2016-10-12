@@ -5,10 +5,14 @@
 	 * Date: 12/10/16
 	 * Time: 1:03 AM
 	 */
-	echo "Started";
-	mysqli_report(MYSQLI_REPORT_ALL);
+	$loginFailed = false;
+	
+	// If there is POST data
 	if(!empty($_POST)) {
-		echo "Posted";
+		
+		$loginSuccess = false;
+				
+		// Establish a connection to the DB
 		$servername = "localhost";
 		$username = "webAccess";
 		$pword = "webpassword";
@@ -20,18 +24,27 @@
 			die("Database Connection failed: " . $conn->connect_error);
 		}
 		
+		// Use a prepared statement to determine if credentials exist in the DB
 		$prepStmtLogin = $conn->prepare("SELECT COUNT(*) FROM login WHERE email=? AND password=?");
-		$email = $_POST["email"];
-		$hashedPassword = hash('sha256', $_POST["password"]);
-		$prepStmtLogin->bind_param("ss", $email, $hashedPassword);
-		echo "Statement Bound";
-		if($loginRow = $prepStmtLogin->execute()) {
+		
+		// Bind the POST data to the prepared statement
+		$prepStmtLogin->bind_param("ss", $_POST["email"], hash('sha256', $_POST["password"]));
+		
+		if($prepStmtLogin->execute()) {
+			
+			// This is required to prevent the "Commands out of order" error
 			$prepStmtLogin->store_result();
 			$prepStmtLogin->bind_result($count);
-			if(!$prepStmtLogin->fetch() ||  $count == 0) {
-				echo "<br>Count: ".$count;
-				die("Login failed");
+			
+			// If the count is 0, the details are not matched
+			if($prepStmtLogin->fetch() &&  $count > 0) {
+				$loginSuccess = true;
 			}
+			else {
+				$loginFailed = true;
+			}
+			
+			// Clear and close the prepared statement
 			$prepStmtLogin->free_result();
 			$prepStmtLogin->close();
 		}
@@ -39,21 +52,19 @@
 			die("Execute failed: " . $prepStmtLogin->errno . " - " . $prepStmtLogin->error);
 		}
 		
-		if($count > 0) {
-			echo "Else Started";
-			if(!$prepStmtCookie = $conn->prepare("SELECT id from users where email=?")) {
-				echo "Prep failed: " . $prepStmtCookie->error_list;
-			}
-			if(!$prepStmtCookie->bind_param("s", $email)) {
-				echo "Bind failed: " . $prepStmtCookie->error_list;
-			}
-			if(!$userID = $prepStmtCookie->execute()) {
-				echo "Execute failed: ";
-			}
-			echo "Cookie Set";
+		if($loginSuccess) {
+			
+			// Retrieve the User ID from the DB
+			$prepStmtCookie = $conn->prepare("SELECT id from users where email=?");
+			$prepStmtCookie->bind_param("s", $email);
+				
+			$userID = $prepStmtCookie->execute();
+				
+			// Set a cookie to store the user ID, valid for 30 days
 			setcookie("userID", $userID, time() + (86400*30), "/");
-			echo "Before header";
-			header("Location: /users");
+			
+			// Since login was successful, redirect to the catalogue page
+			header("Location: /books");
 		}
 	}
 ?>
@@ -70,20 +81,28 @@
 	<body>
 		<div class="container">
 			<h1 class="text-center">Login</h1>
-			<div class="panel panel-default">
+			<div class="panel panel-default center-block">
 				<div class="panel-heading">Login to Library System</div>
-				<form action="index.php" method="post">
-					<div class="form-group center-block">
-						<label for="emailInput">Email Address</label>
-						<input type="email" class="form-control" id="emailInput" name = "email" placeholder="Email">
-					</div>
-					<div class="form-group center-block">
-						<label for="pwordInput">Password</label>
-						<input type="password" class="form-control" id="pwordInput" name="password" placeholder="Password">
-					</div>
-					<button type="submit" class="btn btn-default center-block">Login</button>
-				</form>
+				<div class="form-wrapper">
+					<form action="index.php" method="post">
+						<div class="form-group center-block">
+							<label for="emailInput">Email Address</label>
+							<input type="email" class="form-control" id="emailInput" name = "email" placeholder="Email">
+						</div>
+						<div class="form-group center-block">
+							<label for="pwordInput">Password</label>
+							<input type="password" class="form-control" id="pwordInput" name="password" placeholder="Password">
+						</div>
+						<?php
+							if($loginFailed) {
+								echo "<div class=\"alert alert-danger\"><strong>Invalid Login </strong>We don't recognise that combination.</div>";
+							}
+						?>
+						<button type="submit" class="btn btn-default btn-lg center-block">Login</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</body>
 </html>
+
