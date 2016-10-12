@@ -7,11 +7,8 @@
 	 */
 	
 	if(!empty($_POST)) {
-		echo "started";
-		$servername = "localhost";
-		$username = "webAccess";
-		$pword = "webpassword";
-		$dbName = "libraryDB";
+		
+		include "../includes/databaseVariables.php";
 		
 		$conn = new mysqli($servername, $username, $pword, $dbName);
 		

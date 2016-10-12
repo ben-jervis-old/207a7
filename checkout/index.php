@@ -17,10 +17,7 @@
 	}
 	
 	// Establish DB connection
-	$servername = "localhost";
-	$username = "webAccess";
-	$pword = "webpassword";
-	$dbName = "libraryDB";
+	include "../includes/databaseVariables.php";
 	
 	$conn = new mysqli($servername, $username, $pword, $dbName);
 	
@@ -28,40 +25,45 @@
 		die("Connection failed: " . $conn->connect_error);
 	}
 	
-	$buttonClasses = "btn btn-primary";
+	$buttonAttr = "";
 	
 	if($_GET["confirmed"] == "true") {
 		$prepStmtCheckout = $conn->prepare("INSERT INTO borrowings (userID, bookID, date, time) VALUES (?, ?, CURRENT_DATE(), CURRENT_TIME())");
 		$prepStmtCheckout->bind_param("ii", $_COOKIE["userID"], $_GET["bookID"]);
 		if($prepStmtCheckout->execute()) {
+			$successMessage = "<div class='alert alert-success'><strong>Success. </strong> Checked Out Successfully</div>";
+			$buttonAttr = "disabled=\"disabled\"";
+		}
+		else {
+			$successMessage = "<div class='alert alert-danger'><strong>Error. </strong>An error occurred during checkout process</div>";
+		}
+	}
+	else {
+		$prepStmtUser = $conn->prepare("SELECT firstName, lastName, email FROM users WHERE id=?");
+		$prepStmtUser->bind_param("i", $_COOKIE["userID"]);
+		if($prepStmtUser->execute()) {
+			$prepStmtUser->store_result();
+			$prepStmtUser->bind_result($first, $last, $email);
+			if(!$prepStmtUser->fetch()) {
+				die("Database retrieval error: User Details");
+			}
 			
-		}
-	}
-	
-	$prepStmtUser = $conn->prepare("SELECT firstName, lastName, email FROM users WHERE id=?");
-	$prepStmtUser->bind_param("i", $_COOKIE["userID"]);
-	if($prepStmtUser->execute()) {
-		$prepStmtUser->store_result();
-		$prepStmtUser->bind_result($first, $last, $email);
-		if(!$prepStmtUser->fetch()) {
-			die("Database retrieval error: User Details");
+			$prepStmtUser->free_result();
+			$prepStmtUser->close();
 		}
 		
-		$prepStmtUser->free_result();
-		$prepStmtUser->close();
-	}
-	
-	$prepStmtBook = $conn->prepare("SELECT title, author, callNum, barcode FROM books where id=?");
-	$prepStmtBook->bind_param("i", $_GET["bookID"]);
-	if($prepStmtBook->execute()) {
-		$prepStmtBook->store_result();
-		$prepStmtBook->bind_result($title, $author, $callNum, $barcode);
-		if(!$prepStmtBook->fetch()) {
-			die("Database retrievel error: Book Details");
+		$prepStmtBook = $conn->prepare("SELECT title, author, callNum, barcode FROM books where id=?");
+		$prepStmtBook->bind_param("i", $_GET["bookID"]);
+		if($prepStmtBook->execute()) {
+			$prepStmtBook->store_result();
+			$prepStmtBook->bind_result($title, $author, $callNum, $barcode);
+			if(!$prepStmtBook->fetch()) {
+				die("Database retrievel error: Book Details");
+			}
+			
+			$prepStmtBook->free_result();
+			$prepStmtBook->close();
 		}
-		
-		$prepStmtBook->free_result();
-		$prepStmtBook->close();
 	}
 	
 	$confirmButtonRef = "/checkout/?bookID=".$_GET["bookID"]."&confirmed=true";
@@ -113,8 +115,8 @@
 					</tr>
 				</table>
 			</div> <!-- panel close -->
-			<button class="<?php $buttonClasses ?>"><a href="<?php $confirmButtonRef ?>"></a>Confirm Checkout</button>
-			<?php $successMessage ?>
+			<a class="btn btn-primary" <?php echo $buttonAttr; ?> href="<?php echo $confirmButtonRef; ?>">Confirm Checkout</a>
+			<?php echo $successMessage; ?>
 		</div> <!-- container close -->
 	</body>
 </html>
