@@ -42,7 +42,7 @@
 					<td>Title</td>
 					<td>Author</td>
 					<td>Call Number</td>
-					<td>Check Out</td>
+					<td class="text-center">Check Out</td>
 					
 				</thead>
 				<?php
@@ -65,7 +65,7 @@
 								echo "  <td>$title</td>";
 								echo "  <td>$author</td>";
 								echo "  <td>$callNum</td>";
-								echo "<td><a href='/checkout/?bookID=$bookID'><span class='glyphicon glyphicon-share'></span></a></td>";
+								echo "<td class='text-center'><a href='/checkout/?bookID=$bookID'><span class='glyphicon glyphicon-share'></span></a></td>";
 								echo "</tr>";
 							}
 							
@@ -74,7 +74,7 @@
 						}
 						else {
 							echo "<tr>";
-							echo "<td colspan=\"3\">No results found</td>";
+							echo "<td colspan=\"4\">No results found</td>";
 							echo "</tr>";
 						}
 					}
