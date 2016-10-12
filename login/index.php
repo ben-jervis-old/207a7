@@ -5,6 +5,10 @@
 	 * Date: 12/10/16
 	 * Time: 1:03 AM
 	 */
+	
+	if(isset($_COOKIE["userID"])) {
+		header("Location: /books");
+	}
 	$loginFailed = false;
 	
 	// If there is POST data
@@ -81,7 +85,7 @@
 	<body>
 		<div class="container">
 			<h1 class="text-center">Login</h1>
-			<div class="panel panel-default center-block">
+			<div class="panel panel-default center-block login-panel">
 				<div class="panel-heading">Login to Library System</div>
 				<div class="form-wrapper">
 					<form action="index.php" method="post">
