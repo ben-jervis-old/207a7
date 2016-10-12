@@ -2,6 +2,14 @@
     /*line-height: 100%;*/
 /*}*/
 
+nav {
+	box-sizing: border-box;
+}
+
+nav>div.container {
+	max-width: 100%;
+}
+
 div.form-group {
 	position: relative;
 }
@@ -10,7 +18,7 @@ div.form-wrapper {
 	padding: 15px;
 }
 
-div.panel {
+div.panel.login-panel {
 	max-width: 600px;
 }
 
