@@ -6,9 +6,19 @@ div.form-group {
 	position: relative;
 }
 
-form input, form button {
-	position: relative;
-	box-sizing: border-box;
-	margin: 10px;
-	max-width: 95%;
+div.form-wrapper {
+	padding: 15px;
+}
+
+div.panel {
+	max-width: 600px;
+}
+
+form {
+	margin: 0;
+}
+
+.btn {
+	padding-left: 20px;
+	padding-right: 20px;
 }
