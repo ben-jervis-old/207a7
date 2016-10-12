@@ -10,6 +10,10 @@ nav>div.container {
 	max-width: 100%;
 }
 
+div.container>div.alert {
+	margin-top: 10px;
+}
+
 div.form-group {
 	position: relative;
 }
