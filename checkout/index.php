@@ -73,9 +73,7 @@
 	<head>
 		<title>Assigment 7 | Task 1</title>
 		
-		<!--Bootstrap Link-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../main.css">
+		<?php include "../includes/headerIncludes.html"; ?>
 	</head>
 	<body>
 		<div class="container">
@@ -119,4 +117,9 @@
 			<?php echo $successMessage; ?>
 		</div> <!-- container close -->
 	</body>
+	<script>
+		$( function()    {
+			$("div.panel").effect("slide");
+		});
+	</script>
 </html>

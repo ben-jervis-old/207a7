@@ -18,12 +18,13 @@
 <html>
 	<head>
 		<title>Assigment 7 | Task 1</title>
-
-		<!--Bootstrap Link-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../main.css">
+		
+		<?php include "../includes/headerIncludes.html"; ?>
 	</head>
 	<body>
+		<div id="dialog" title="Access Restriction">
+			<p>Only Administrators should access this page</p>
+		</div>
 		<div class="container">
 			<?php include '../includes/navbar.html'; ?>
 			<h1>ISIT207 Library - User List</h1>
@@ -55,4 +56,9 @@
 			</div> <!-- panel close -->
 		</div> <!-- container close -->
 	</body>
+	<script>
+		$(  function () {
+			$("#dialog").dialog();
+		});
+	</script>
 </html>

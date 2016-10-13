@@ -18,11 +18,15 @@ div.form-group {
 	position: relative;
 }
 
+div.form-group>input.form-control {
+	margin-top: 10px;
+}
+
 div.form-wrapper {
 	padding: 15px;
 }
 
-div.panel.login-panel {
+div.panel.limited-width-panel {
 	max-width: 600px;
 }
 
@@ -33,4 +37,9 @@ form {
 .btn {
 	padding-left: 20px;
 	padding-right: 20px;
+}
+
+#register-link {
+	max-width: 90px;
+	margin-top: 10px;
 }

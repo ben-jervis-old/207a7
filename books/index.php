@@ -17,7 +17,13 @@
 		$greetString = "View books related to " . $_GET["subject"];
 	}
 	else {
-		$greetString = "Select a topic from the menu above";
+		$greetString = "Select a topic from the menu above, or from the dropdown ";
+		$greetString = $greetString . "<select name=\"topics\" id=\"topics\">";
+		$greetString = $greetString . "<option disabled selected>Select topic</option>";
+		$greetString = $greetString . "<option>Engineering</option>";
+		$greetString = $greetString . "<option>Medicine</option>";
+		$greetString = $greetString . "<option>Development</option>";
+		$greetString = $greetString . "</select><button id=\"go-button\">Go</button>";
 	}
 ?>
 
@@ -25,9 +31,7 @@
 	<head>
 		<title>Assigment 7 | Task 1</title>
 
-		<!--Bootstrap Link-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../main.css">
+		<?php include "../includes/headerIncludes.html"; ?>
 	</head>
 	<body>
 		<div class="container">
@@ -78,5 +82,16 @@
 				?>
 			</table>
 		</div>
+		<script>
+			$( function () {
+				$("#topics").selectmenu();
+				$("#go-button").button();
+				$("#go-button").click(function (event) {
+					event.preventDefault();
+//					console.log("/books/?subject=" + $("#topics").val());
+					window.location.replace("/books/?subject=" + $("#topics").val());
+				})
+			});
+		</script>
 	</body>
 </html>

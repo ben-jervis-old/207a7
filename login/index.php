@@ -74,15 +74,12 @@
 	<head>
 		<title>Assignment Library | Login</title>
 		
-		<!--Bootstrap Link-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		
-		<link rel="stylesheet" href="../main.css">
+		<?php include "../includes/headerIncludes.html"; ?>
 	</head>
 	<body>
 		<div class="container">
 			<h1 class="text-center">Login</h1>
-			<div class="panel panel-default center-block login-panel">
+			<div class="panel panel-default center-block limited-width-panel">
 				<div class="panel-heading">Login to Library System</div>
 				<div class="form-wrapper">
 					<form action="index.php" method="post">
@@ -99,10 +96,13 @@
 								echo "<div class=\"alert alert-danger\"><strong>Invalid Login </strong>We don't recognise that combination.</div>";
 							}
 						?>
-						<button type="submit" class="btn btn-default btn-lg center-block">Login</button>
+						<button type="submit" class="btn btn-primary btn-lg center-block">Login</button>
+						<a href="../register" class="btn btn-default btn-sm center-block" id="register-link">Register</a>
 					</form>
 				</div>
+				
 			</div>
+			
 		</div>
 	</body>
 </html>
